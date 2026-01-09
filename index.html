@@ -735,9 +735,9 @@ function getDirectLink(url) {
             return 'https://lh3.googleusercontent.com/d/' + fileId;
         }
     }
-    return url || 'https://via.placeholder.com/150';
+    // 링크가 없으면 로고 파일 사용
+    return url || 'logo.png';
 }
-
 
 
 // 4. 데이터를 불러와서 화면에 그리는 통합 함수
@@ -831,31 +831,33 @@ function renderPublications() {
 function renderNews() {
     const list = document.getElementById('news-grid');
     if (!list) return;
-    list.innerHTML = allLabData.news.map(n => `
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" style="cursor:pointer;" onclick="window.open('${n.img}')">
-                <img src="${n.img}" class="card-img-top" style="height:200px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/400x250'">
-                <div class="card-body">
-                    <span class="badge bg-light text-primary mb-2">${n.tag}</span>
-                    <h6 class="fw-bold mb-2">${n.title}</h6>
-                    <p class="text-muted x-small mb-3">${n.desc.substring(0, 100)}...</p>
-                    <div class="text-secondary" style="font-size:0.7rem;">${n.date}</div>
+        list.innerHTML = allLabData.news.map(n => `
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" style="cursor:pointer;" onclick="window.open('${n.img}')">
+                    <img src="${n.img}" 
+                        onerror="this.src='logo.png'" 
+                        class="card-img-top" 
+                        style="height:200px; object-fit:cover;">
+                    <div class="card-body">
+                        </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
 }
 
 function renderInterests() {
     const list = document.getElementById('interest-list');
     if (!list) return;
-    list.innerHTML = allLabData.interests.map(i => `
-        <div class="mb-5 text-center">
-            <img src="${i.img}" class="img-fluid mb-4 shadow-sm" style="width:60%; height:auto;">
-            <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
-            <p class="text-muted mx-auto" style="max-width:800px; line-height:1.8;">${i.desc}</p>
-        </div>
-    `).join('');
+        list.innerHTML = allLabData.interests.map(i => `
+            <div class="mb-5 text-center">
+                <img src="${i.img}" 
+                    onerror="this.src='logo.png'" 
+                    class="img-fluid mb-4 shadow-sm" 
+                    style="width:60%; height:auto;">
+                <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
+                <p class="text-muted mx-auto" style="max-width:800px; line-height:1.8;">${i.desc}</p>
+            </div>
+        `).join('');
 }
 
 
@@ -880,17 +882,17 @@ function renderMembers(category) {
         return;
     }
 
-    grid.innerHTML = filtered.map(m => `
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="member-card shadow-sm p-4 bg-white rounded-3 border-0 text-center hover-translate-up" style="transition: 0.3s;">
-                <img src="${m.photo}" class="rounded-circle mb-3 shadow-sm" style="width:150px; height:150px; object-fit:cover; border: 3px solid #f8f9fa;">
-                <div class="name fw-bold fs-5">${m.name}</div>
-                <div class="eng-name text-muted small mb-2">${m.engName}</div>
-                <a class="email d-block mb-1 text-decoration-none" href="mailto:${m.email}" style="color: var(--cnu-blue); font-size: 0.9rem;">${m.email}</a>
-                <div class="status text-secondary" style="font-size: 0.8rem;">${m.status}</div>
+        grid.innerHTML = filtered.map(m => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="member-card shadow-sm p-4 bg-white rounded-3 border-0 text-center hover-translate-up" style="transition: 0.3s;">
+                    <img src="${m.photo}" 
+                        onerror="this.src='logo.png'" 
+                        class="rounded-circle mb-3 shadow-sm" 
+                        style="width:150px; height:150px; object-fit:cover; border: 3px solid #f8f9fa;">
+                    <div class="name fw-bold fs-5">${m.name}</div>
+                    </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
 }
 
 // 2. 페이지 로드 시 실행 (함수명 오타 수정: loadLabData -> loadAllLabData)
