@@ -185,6 +185,8 @@ footer {
                       
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+
 </head>
 
 
@@ -487,25 +489,12 @@ footer {
 <!-- 연구주제 -->
 
 <section id="interests" class="content-section" style="display: none;">
-  <div class="container py-5">
-    
-<div>
-      
-      <h1 class="section-title text-3xl md:text-4xl font-extrabold mb-8 text-gray-900 border-l-8 border-[var(--cnu-blue)] pl-5">
-        Interests
-      </h1>
-      
-      
-        <iframe 
-            id="interests-iframe"
-            src="https://script.google.com/macros/s/AKfycbyRZDLDpzueu0K5KF9RagMiUzu_Fim-bB8Kd32NFC-7eaFNTPFskhP1xWyUs98hajJ3/exec?page=interests" 
-            style="width: 100%; border: none; height: 700px; display: block;" 
-            loading="lazy">
-        </iframe>
-      
+    <div class="container py-5">
+        <h1 class="section-title">Interests</h1>
+        <div id="interest-list">
+            <p class="text-center">Loading interests...</p>
+        </div>
     </div>
-
-  </div>
 </section>
 
 
@@ -520,25 +509,12 @@ footer {
  <!-- 출간된 논문 섹션 -->
  <!-- 출간된 논문 섹션 --> 
 <section id="publications" class="content-section" style="display: none;">
-  <div class="container py-5">
-    
-<div>
-      
-      <h1 class="section-title text-3xl md:text-4xl font-extrabold mb-8 text-gray-900 border-l-8 border-[var(--cnu-blue)] pl-5">
-        Publications
-      </h1>
-      
-      <div class="shadow-lg rounded-2xl overflow-hidden border border-gray-200 bg-white">
-        <iframe 
-            id="publications-iframe"
-            src="https://script.google.com/macros/s/AKfycbyRZDLDpzueu0K5KF9RagMiUzu_Fim-bB8Kd32NFC-7eaFNTPFskhP1xWyUs98hajJ3/exec?page=publications" 
-            style="width: 100%; border: none; height: 700px; display: block;" 
-            loading="lazy">
-        </iframe>
-      </div>
+    <div class="container py-5">
+        <h1 class="section-title">Publications</h1>
+        <div id="pub-list" class="bg-white p-4 shadow-sm rounded-3">
+            <p class="text-center">Loading publications...</p>
+        </div>
     </div>
-
-  </div>
 </section>
 
 
@@ -554,18 +530,9 @@ footer {
      
 <section id="news" class="content-section" style="display: none;">
     <div class="container py-5">
-        <h1 class="section-title text-3xl md:text-4xl font-extrabold mb-10 text-gray-900 border-l-8 border-[var(--cnu-blue)] pl-5">
-            News
-        </h1>
-
-        <div class="shadow-lg rounded-2xl overflow-hidden bg-white">
-            <iframe 
-                id="news-iframe"
-                src="https://script.google.com/macros/s/AKfycbyRZDLDpzueu0K5KF9RagMiUzu_Fim-bB8Kd32NFC-7eaFNTPFskhP1xWyUs98hajJ3/exec?page=news" 
-                style="width: 100%; border: none; height: 700px; display: block;" 
-                loading="lazy"
-                >
-            </iframe>
+        <h1 class="section-title">News</h1>
+        <div id="news-grid" class="row">
+            <p class="text-center">Loading news...</p>
         </div>
     </div>
 </section>
@@ -754,6 +721,14 @@ footer {
 
 
 
+const URLS = {
+    members: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=0&single=true&output=csv",
+    publications: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=637438885&single=true&output=csv",
+    news: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=524342030&single=true&output=csv", 
+    interests: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=430870758&single=true&output=csv" 
+};
+
+
 
 //연구실구성원 섹션
 //연구실구성원 섹션
@@ -794,43 +769,93 @@ function getDirectLink(url) {
 // 4. 데이터를 불러와서 화면에 그리는 통합 함수
 let allLabData = { members: [], publications: [], news: [], interests: [] };
 
-async function loadLabData() {
+async function loadAllLabData() {
     try {
-        const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=0&single=true&output=csv";
-        
-        const response = await fetch(SPREADSHEET_CSV_URL);
-        const csvText = await response.text();
-        
-        // PapaParse를 사용하여 CSV를 배열로 변환 (따옴표 내 쉼표 문제 해결)
-        const results = Papa.parse(csvText, { header: false });
-        const fullData = results.data;
-        
-        // 데이터가 비어있는지 확인
-        if (fullData.length <= 1) {
-            document.getElementById('member-grid').innerHTML = '<p class="text-center py-5">시트에 데이터가 없거나 불러올 수 없습니다.</p>';
-            return;
-        }
+        // 모든 시트 데이터를 동시에 병렬 호출 (로딩 속도 최적화)
+        const [resMem, resPub, resNews, resInt] = await Promise.all([
+            fetch(URLS.members), fetch(URLS.publications), fetch(URLS.news), fetch(URLS.interests)
+        ]);
 
-        const membersData = fullData.slice(1); // 헤더 제외
-        allLabData.members = membersData
-            .filter(row => row[1]) // 이름(2번째 열)이 있는 경우만
-            .map(row => ({
-                category: (row[0] || "").trim(),
-                name: (row[1] || "").trim(),
-                engName: (row[2] || "").trim(),
-                email: (row[3] || "").trim(),
-                status: (row[4] || "").trim(),
-                photo: getDirectLink(row[5] || "")
-            }));
+        const texts = await Promise.all([resMem.text(), resPub.text(), resNews.text(), resInt.text()]);
 
-        console.log("데이터 로드 성공:", allLabData.members); // 확인용 로그
+        // 1. Members 파싱
+        allLabData.members = Papa.parse(texts[0], {header: false}).data.slice(1).filter(r => r[1]);
+        
+        // 2. Publications 파싱 (년도 내림차순 정렬)
+        allLabData.publications = Papa.parse(texts[1], {header: false}).data.slice(1)
+            .filter(r => r[1])
+            .map(r => ({ year: r[0], title: r[1], journal: r[2], link: r[3] }))
+            .sort((a, b) => b.year - a.year);
+
+        // 3. News 파싱 (최신순 정렬)
+        allLabData.news = Papa.parse(texts[2], {header: false}).data.slice(1)
+            .filter(r => r[1])
+            .map(r => ({ date: r[0], title: r[1], desc: r[2], tag: r[3], img: getDirectLink(r[4]) }))
+            .reverse(); // 최신 뉴스를 위로
+
+        // 4. Interests 파싱
+        allLabData.interests = Papa.parse(texts[3], {header: false}).data.slice(1)
+            .filter(r => r[0])
+            .map(r => ({ title: r[0], desc: r[1], img: getDirectLink(r[2]) }));
+
+        // 전 섹션 렌더링 실행
         renderMembers('대학원생');
-        
+        renderPublications();
+        renderNews();
+        renderInterests();
+
     } catch (err) {
-        console.error("데이터 로딩 오류:", err);
-        document.getElementById('member-grid').innerHTML = '<p class="text-center py-5 text-danger">데이터 로딩 실패: ' + err.message + '</p>';
+        console.error("통합 데이터 로드 실패:", err);
     }
 }
+
+// --- 각 섹션 렌더링 함수 ---
+
+function renderPublications() {
+    const list = document.getElementById('pub-list');
+    if (!list) return;
+    list.innerHTML = allLabData.publications.map(p => `
+        <div class="pub-item border-bottom py-3 d-flex gap-3 align-items-start">
+            <span class="badge bg-primary rounded-1" style="min-width:60px;">${p.year}</span>
+            <div>
+                <a href="${p.link}" target="_blank" class="text-decoration-none fw-bold text-dark d-block mb-1">${p.title}</a>
+                <div class="text-muted small italic">${p.journal}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderNews() {
+    const list = document.getElementById('news-grid');
+    if (!list) return;
+    list.innerHTML = allLabData.news.map(n => `
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" style="cursor:pointer;" onclick="window.open('${n.img}')">
+                <img src="${n.img}" class="card-img-top" style="height:200px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/400x250'">
+                <div class="card-body">
+                    <span class="badge bg-light text-primary mb-2">${n.tag}</span>
+                    <h6 class="fw-bold mb-2">${n.title}</h6>
+                    <p class="text-muted x-small mb-3">${n.desc.substring(0, 100)}...</p>
+                    <div class="text-secondary" style="font-size:0.7rem;">${n.date}</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderInterests() {
+    const list = document.getElementById('interest-list');
+    if (!list) return;
+    list.innerHTML = allLabData.interests.map(i => `
+        <div class="mb-5 text-center">
+            <img src="${i.img}" class="img-fluid mb-4 shadow-sm" style="width:60%; height:auto;">
+            <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
+            <p class="text-muted mx-auto" style="max-width:800px; line-height:1.8;">${i.desc}</p>
+        </div>
+    `).join('');
+}
+
+
 // 5. 인물 카드 렌더링 함수 (기존 HTML 디자인 유지)
 function renderMembers(category) {
     const grid = document.getElementById('member-grid');
