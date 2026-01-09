@@ -755,7 +755,7 @@ function getDirectLink(url) {
         }
     }
     // 링크가 없으면 로고 파일 사용
-    return url || 'logo.png';
+    return url || 'error.png';
 }
 
 
@@ -856,7 +856,7 @@ function renderNews() {
             <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" 
                  style="cursor:pointer;" onclick="window.open('${n.img}', '_blank')">
                 <img src="${n.img}" 
-                    onerror="this.src='logo.png'" 
+                    onerror="this.src='error.png'" 
                     class="card-img-top" 
                     style="height:200px; object-fit:cover;">
                 <div class="card-body">
@@ -876,7 +876,7 @@ function renderInterests() {
         list.innerHTML = allLabData.interests.map(i => `
             <div class="mb-5 text-center">
                 <img src="${i.img}" 
-                    onerror="this.src='logo.png'" 
+                    onerror="this.src='error.png'" 
                     class="img-fluid mb-4 shadow-sm" 
                     style="width:60%; height:auto;">
                 <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
@@ -910,7 +910,7 @@ function renderMembers(category) {
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="member-card shadow-sm p-4 bg-white rounded-3 border-0 text-center hover-translate-up" style="transition: 0.3s;">
                 <img src="${m.photo}" 
-                    onerror="this.src='logo.png'" 
+                    onerror="this.src='error.png'" 
                     class="rounded-circle mb-3 shadow-sm" 
                     style="width:150px; height:150px; object-fit:cover; border: 3px solid #f8f9fa;">
                 <div class="name fw-bold fs-5">${m.name}</div>
