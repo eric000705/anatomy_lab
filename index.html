@@ -171,7 +171,23 @@
 .carousel-fade .carousel-item {
     transition-duration: 1.5s; /* 사진 교체 속도 */
 }
-                      
+                    
+
+
+
+
+
+
+
+/* news섹션의 내용 축약 */
+.news-summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 보여줄 줄 수 (3줄) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 4.5em; /* line-height가 1.5일 때 3줄 높이 */
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
@@ -303,21 +319,33 @@
         </div>
 
         <div class="hero-content position-relative text-center text-white py-5 shadow-sm" style="z-index: 2;">
-            <div class="container py-lg-5">
-              <br><br>
-                <h2 class="display-4 fw-bold mb-3 tracking-tight">충남대학교 수의해부학 연구실</h2>
-                <p class="fs-4 fw-light opacity-90 mb-4">Laboratory of Veterinary Anatomy & Biomedical Research</p>
-                <hr class="mx-auto border-2 opacity-100" style="width: 80px; color: #fff;">
-                <p class="lead fw-normal mb-5 px-lg-5">
-                    마우스 모델을 활용하여 <strong>신장(Kidney)</strong> 및 <strong>전립선(Prostate)</strong> 질환의 핵심 기전을 규명하고,<br class="d-none d-md-block">
-                    차세대 바이오 플랫폼인 <strong>엑소좀(Exosome)</strong> 연구를 통해 수의학의 새로운 미래를 엽니다.
-                </p>
-                <div class="d-flex justify-content-center gap-3">
-                    <button class="btn btn-outline-light btn-lg px-4 rounded-pill" onclick="showSection('interests')">연구 분야 보기</button>
-                    <button class="btn btn-light btn-lg px-4 rounded-pill text-primary" onclick="showSection('contact')">문의하기</button>
+                <div class="container py-lg-5">
+                    <br><br>
+                    <h2 class="display-4 fw-bold mb-2 tracking-tight">충남대학교 수의해부학 연구실</h2>
+                    <p class="fs-4 fw-light opacity-75 mb-4 font-monospace">Laboratory of Veterinary Anatomy</p>
+                    
+                    <hr class="mx-auto border-2 opacity-100 mb-5" style="width: 400px; color: var(--accent-red); height: 3px;">
+
+                    <div class="hero-text-content mb-5 px-lg-5">
+                        <h3 class="fs-4 fw-bold mb-4">
+                            "동물 모델을 통해 <span class="text-warning">인간 질환과 노화의 기전</span>을 밝히다"
+                        </h3>
+                        
+                        <p class="mx-auto opacity-90" style="max-width: 800px; line-height: 1.8; word-break: keep-all; font-size: 1rem; font-weight: 400;">
+                            전임상 수의학 연구를 기반으로 <strong>엑소좀(Exosome)</strong>을 포함한 차세대 바이오 기술을 활용하여<br class="d-none d-md-block">
+                            신장 질환, 노화, 그리고 삶의 질 개선을 위한 <span class="border-bottom border-white pb-1" style="border-width: 1px !important;">기전 중심 연구</span>를 수행합니다.
+                        </p>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold transition-all shadow-sm" onclick="showSection('interests')">
+                            연구 분야 보기
+                        </button>
+                        <button class="btn btn-light btn-lg px-5 rounded-pill text-primary fw-bold transition-all shadow-sm" onclick="showSection('contact')">
+                            문의하기
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </div>
     </header>
 
 
@@ -893,9 +921,7 @@ function renderNews() {
                 <div class="card-body">
                     <span class="badge bg-light text-primary mb-2">${n.tag || 'News'}</span>
                     <h6 class="fw-bold mb-2">${n.title}</h6>
-                    <p class="text-muted x-small mb-3">
-                        ${n.desc ? (n.desc.length > 80 ? n.desc.substring(0, 80) + '...' : n.desc) : ''}
-                    </p>
+                   <p class="text-muted x-small mb-3 news-summary">${n.desc || ''}</p>
                     <div class="text-secondary" style="font-size:0.7rem;">${n.date}</div>
                 </div>
             </div>
