@@ -706,8 +706,27 @@
 
 
 
-
-
+<!-- news섹션 사진팝업을 위한 모달 구조 -->
+<div class="modal fade" id="newsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold text-primary" id="newsModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <img id="newsModalImg" src="" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;">
+                <div class="p-4">
+                    <div id="newsModalDate" class="text-secondary mb-2" style="font-size: 0.85rem;"></div>
+                    <div id="newsModalDesc" class="text-muted" style="line-height: 1.8; white-space: pre-wrap;"></div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -862,18 +881,21 @@ function renderNews() {
     const list = document.getElementById('news-grid');
     if (!list) return;
     
-    list.innerHTML = allLabData.news.map(n => `
+    // map의 두 번째 인자인 'index'를 사용하여 각 카드의 고유 번호를 부여합니다.
+    list.innerHTML = allLabData.news.map((n, index) => `
         <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" 
-                 style="cursor:pointer;" onclick="window.open('${n.img}', '_blank')">
+                 style="cursor:pointer;" onclick="openNewsModal(${index})">
                 <img src="${n.img}" 
-                    onerror="this.src='error.png'" 
+                    onerror="this.src='logo.png'" 
                     class="card-img-top" 
                     style="height:200px; object-fit:cover;">
                 <div class="card-body">
                     <span class="badge bg-light text-primary mb-2">${n.tag || 'News'}</span>
                     <h6 class="fw-bold mb-2">${n.title}</h6>
-                    <p class="text-muted x-small mb-3">${n.desc ? n.desc.substring(0, 100) : ''}</p>
+                    <p class="text-muted x-small mb-3">
+                        ${n.desc ? (n.desc.length > 80 ? n.desc.substring(0, 80) + '...' : n.desc) : ''}
+                    </p>
                     <div class="text-secondary" style="font-size:0.7rem;">${n.date}</div>
                 </div>
             </div>
@@ -961,6 +983,23 @@ function showSection(sectionId) {
     window.scrollTo(0, 0);
 }
 
+
+// News 모달 열기 함수 (news의 사진팝업)
+function openNewsModal(index) {
+    const data = allLabData.news[index];
+    if (!data) return;
+
+    // 모달 내용 채우기
+    document.getElementById('newsModalTitle').innerText = data.title;
+    document.getElementById('newsModalImg').src = data.img;
+    document.getElementById('newsModalImg').onerror = function() { this.src = 'logo.png'; };
+    document.getElementById('newsModalDate').innerText = data.date;
+    document.getElementById('newsModalDesc').innerText = data.desc;
+
+    // 부트스트랩 모달 띄우기
+    const myModal = new bootstrap.Modal(document.getElementById('newsModal'));
+    myModal.show();
+}
 
 </script>
 </body>
