@@ -41,7 +41,7 @@
                 .main-footer {
                     background-color: #1a1c1e; /* 깊이감 있는 차콜 그레이 */
                     color: #ffffff;
-                    padding: 30px 0;
+                    padding: 10px 0;
                     border-top: 4px solid var(--cnu-blue); /* 상단 포인트 라인 */
                 }
 
@@ -188,6 +188,15 @@
     text-overflow: ellipsis;
     height: 4.5em; /* line-height가 1.5일 때 3줄 높이 */
 }
+
+
+
+
+
+
+
+
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
@@ -338,10 +347,15 @@
                     </div>
 
                     <div class="d-flex justify-content-center gap-3">
-                        <button class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold transition-all shadow-sm" onclick="showSection('interests')">
+                        <button class="btn btn-outline-light btn-lg rounded-pill fw-bold transition-all shadow-sm" 
+                                style="width: 200px; padding-top: 15px; padding-bottom: 15px;" 
+                                onclick="showSection('interests')">
                             연구 분야 보기
                         </button>
-                        <button class="btn btn-light btn-lg px-5 rounded-pill text-primary fw-bold transition-all shadow-sm" onclick="showSection('contact')">
+                        
+                        <button class="btn btn-light btn-lg rounded-pill text-primary fw-bold transition-all shadow-sm" 
+                                style="width: 200px; padding-top: 15px; padding-bottom: 15px;" 
+                                onclick="showSection('contact')">
                             문의하기
                         </button>
                     </div>
@@ -353,29 +367,32 @@
 
     
     <div class="container mt-n5 position-relative" style="z-index: 5;">
-        <div class="row g-4 justify-content-center">
+    <div class="row g-4 justify-content-center">
+
+
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-lg text-center p-4 hover-translate-up">
-                    <div class="mb-3 text-primary"><i class="fa-solid fa-hand-holding-droplet fa-3x"></i></div>
-                    <h4 class="fw-bold">Kidney Research</h4>
-                    <p class="text-muted small">신장의 미세구조 분석과 질환 발생의 분자적 기전 연구</p>
+                    <div class="mb-3 text-primary"> <img src="card1.png" alt="CNU Logo" style="height: 32px; width: auto; margin-right: 10px;"></div>
+                    <h4 class="fw-bold">Chronic Kidney Disease<br>& Renal Aging</h4>
+                    <p class="text-muted small">만성 신장질환 및 신장 노화 연구</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-lg text-center p-4 hover-translate-up">
-                    <div class="mb-3 text-danger"><i class="fa-solid fa-microscope fa-3x"></i></div>
-                    <h4 class="fw-bold">Prostate Mechanism</h4>
-                    <p class="text-muted small">마우스 모델 기반 전립선 병태생리 및 세포 신호 전달 분석</p>
+                    <div class="mb-3 text-danger"> <img src="card2.png" alt="CNU Logo" style="height: 32px; width: auto; margin-right: 10px;"></div>
+                    <h4 class="fw-bold">Translational<br>Preclinical Models</h4>
+                    <p class="text-muted small">중재 전임상 모델 분석</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-lg text-center p-4 hover-translate-up">
-                    <div class="mb-3 text-success"><i class="fa-solid fa-circle-nodes fa-3x"></i></div>
-                    <h4 class="fw-bold">Next-Gen Exosome</h4>
-                    <p class="text-muted small">엑소좀 기반 진단 마커 발굴 및 차세대 치료 전략 수립</p>
+                    <div class="mb-3 text-danger"> <img src="card3.png" alt="CNU Logo" style="height: 32px; width: auto; margin-right: 10px;"></div>
+                    <h4 class="fw-bold">Mechanistic Studies</h4>
+                    <p class="text-muted small">분자 생물학적 기전 연구</p>
                 </div>
             </div>
-        </div><br>
+        </div>
+            <br>
     </div>
 </section>
 
@@ -420,38 +437,71 @@
 
         <div class="col-lg-8 p-4 p-md-5">
           <div class="mb-5">
-            <h2 class="display-6 fw-bold mb-2" style="color: var(--cnu-blue);">홍금란 <small class="text-muted fs-5 ms-2">Geum-Lan Hong<br> Ph.D.    D.V.M.</small></h2>
-            <p class="text-secondary fs-5 fw-medium">충남대학교 수의과대학 해부학실험실 조교수</p>
+            <h2 class="display-6 fw-bold mb-2" style="color: var(--cnu-blue);">
+                홍금란 <small class="text-muted fs-5 ms-2">Geum-Lan Hong, Ph.D., D.V.M.</small>
+            </h2>
+            <p class="text-secondary fs-5 fw-medium">
+                충남대학교 수의과대학 해부학실험실 조교수<br>
+                <span class="fs-6 opacity-75">Assistant Professor, Lab of Veterinary Anatomy, College of Veterinary Medicine, CNU</span>
+            </p>
           </div>
 
           <div class="row g-4">
             <div class="col-md-6">
               <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
-                <i class="fa-solid fa-graduation-cap me-2 text-primary"></i>Education
+                <i class="fa-solid fa-graduation-cap me-2 text-primary"></i>학력 <span class="ms-2 fs-6 text-muted fw-normal">Education</span>
               </h3>
-              <ul class="list-unstyled text-muted border-start border-3 ps-3" style="line-height: 1.8;">
-                <li><strong class="text-dark">Ph.D.</strong> in Veterinary Medicine</li>
-                <li><strong class="text-dark">M.S.</strong> in Veterinary Medicine</li>
-                <li><strong class="text-dark">B.S.</strong> in Veterinary Medicine</li>
+              <ul class="list-unstyled text-muted border-start border-3 ps-3" style="line-height: 1.6;">
+                <li class="mb-2">
+                    <strong class="text-dark">2022</strong> 충남대학교 수의학 박사<br>
+                    <small>Ph.D. in Veterinary Medicine, CNU</small>
+                </li>
+                <li>
+                    <strong class="text-dark">2019</strong> 충남대학교 수의학 학사<br>
+                    <small>D.V.M. (Bachelor of Veterinary Medicine), CNU</small>
+                </li>
               </ul>
             </div>
 
             <div class="col-md-6">
-              <div class="mb-4">
-                <h3 class="h5 fw-bold mb-2 d-flex align-items-center">
-                  <i class="fa-solid fa-microscope me-2 text-primary"></i>Research Interests
-                </h3>
-                <p class="text-muted ps-4 mb-0">수의해부학, 수의조직학</p>
+              <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                <i class="fa-solid fa-envelope me-2 text-primary"></i>연락처 <span class="ms-2 fs-6 text-muted fw-normal">Contact</span>
+              </h3>
+              <div class="text-muted ps-3 border-start border-3" style="line-height: 1.8;">
+                <p class="mb-1"><strong>Email:</strong> honggl@cnu.ac.kr</p>
+                <p class="mb-1"><strong>Office:</strong> 충남대학교 수의과대학 N13-1 105호 </p>
+                <p class="mb-0"><strong>Tel:</strong> 042-821-6758</p>
               </div>
-              <div>
-                <h3 class="h5 fw-bold mb-2 d-flex align-items-center">
-                  <i class="fa-solid fa-envelope me-2 text-primary"></i>Contact
+            </div>
+
+            <div class="col-12 mt-5">
+              <div class="p-4 rounded-3" style="background-color: #f8f9fa; border-left: 5px solid var(--cnu-blue);">
+                <h3 class="h5 fw-bold mb-4 d-flex align-items-center">
+                  <i class="fa-solid fa-microscope me-2 text-primary"></i>주요 연구 분야 <span class="ms-2 fs-6 text-muted fw-normal">Research Interests</span>
                 </h3>
-                <div class="text-muted ps-4">
-                  <p class="mb-1">Email: honggl@cnu.ac.kr</p>
-                  <p class="mb-0">Office: 수의과대학 N13-1 105호</p>
-                  <p class="mb-0">Tel: 042-821-6758</p>
-                </div>
+                <ul class="list-unstyled text-muted mb-0" style="line-height: 1.7;">
+                  <li class="mb-3 d-flex align-items-start">
+                    <i class="fa-solid fa-check me-2 mt-1 text-primary small"></i>
+                    <div>
+                        <strong>급성 신부전의 병태생리적 기전 규명 및 치료 후보물질 개발</strong><br>
+                        <small>Pathophysiological mechanisms of acute kidney injury (AKI) and development of therapeutic candidates</small>
+                    </div>
+                  </li>
+                  <li class="mb-3 d-flex align-items-start">
+                    <i class="fa-solid fa-check me-2 mt-1 text-primary small"></i>
+                    <div>
+                        <strong>만성 신부전의 발생·진행 기전 연구 및 자식작용 조절 기반 치료 후보물질 개발</strong><br>
+                        <small>Mechanisms of chronic kidney disease (CKD) progression and autophagy-modulating therapeutics</small>
+                    </div>
+                  </li>
+                  <li class="d-flex align-items-start">
+                    <i class="fa-solid fa-check me-2 mt-1 text-primary small"></i>
+                    <div>
+                        <strong>자식작용과 연관된 전립선비대증의 기전 연구 및 치료 후보물질 개발</strong><br>
+                        <small>Mechanisms of benign prostatic hyperplasia (BPH) related to autophagy and development of therapeutic agents</small>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -694,24 +744,19 @@
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-lg-4 text-center text-lg-start">
-                <div class="footer-logo mb-3">
-
-                  
-                   <img src="logo.png" alt="CNU Logo" style="height: 32px; width: auto; margin-right: 10px;">
+                <div class="footer-logo mb-2">
+                    <img src="logo.png" alt="CNU Logo" style="height: 32px; width: auto; margin-right: 10px;">
                     <span class="fw-bold">CNU VET ANATOMY</span>
                 </div>
-                <p class="footer-quote mb-0 text-secondary">
-                    "동물 해부학의 정밀함으로<br>수의학의 미래를 연구합니다."
-                </p>
+                <p class="mb-0 fw-bold text-light" style="font-size: 1rem; opacity: 0.9;">충남대학교 수의과대학 해부학실험실</p>
             </div>
 
             <div class="col-lg-4 text-center border-start-lg">
                 <div class="footer-info">
-                    <p class="mb-2 fw-bold text-light">충남대학교 수의과대학 해부학실험실</p>
                     <p class="small text-secondary mb-1">
                         <i class="fa-solid fa-location-dot me-2"></i> (34134) 대전광역시 유성구 대학로 99 수의과대학(N13-1) 106호
                     </p>
-                    <p class="small text-secondary">
+                    <p class="small text-secondary mb-0">
                         <i class="fa-solid fa-phone me-2"></i> 042-821-7903
                     </p>
                 </div>
@@ -719,18 +764,16 @@
 
             <div class="col-lg-4 text-center text-lg-end">
                 <div class="footer-social mb-3">
-                    <!-- <a href="#" class="social-icon" title="Github"><i class="fa-brands fa-github"></i></a> -->
                     <a href="mailto:honggl@cnu.ac.kr" class="social-icon" title="Email"><i class="fa-solid fa-envelope"></i></a>
                     <a href="https://vetmed.cnu.ac.kr/" target="_blank" class="social-icon" title="CNU Vet"><i class="fa-solid fa-building-columns"></i></a>
                 </div>
                 <p class="copyright small text-secondary">
-                    © 2026 CNU Vet Anatomy Lab. All Rights Reserved.<br>made by diamond_ws.
+                    © 2026, Won-Seok Oh. All Rights Reserved.
                 </p>
             </div>
         </div>
     </div>
 </footer>
-
 
 
 
@@ -832,7 +875,7 @@ async function loadAllLabData() {
         const rawPub = Papa.parse(texts[1], {header: false}).data;
         allLabData.publications = rawPub.slice(1)
             .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ year: r[0], title: r[1], journal: r[2], link: r[3] }))
+            .map(r => ({ year: r[0], title: r[1], journal: r[2], author: r[3], link: r[4] }))
             .sort((a, b) => b.year - a.year);
 
         // 3. News 파싱
@@ -894,16 +937,29 @@ document.addEventListener('DOMContentLoaded', function() {
 function renderPublications() {
     const list = document.getElementById('pub-list');
     if (!list) return;
+
     list.innerHTML = allLabData.publications.map(p => `
-        <div class="pub-item border-bottom py-3 d-flex gap-3 align-items-start">
-            <span class="badge bg-primary rounded-1" style="min-width:60px;">${p.year}</span>
-            <div>
-                <a href="${p.link}" target="_blank" class="text-decoration-none fw-bold text-dark d-block mb-1">${p.title}</a>
-                <div class="text-muted small italic">${p.journal}</div>
+        <div class="pub-item border-bottom py-3 d-flex gap-3 align-items-start" style="transition: background 0.3s;">
+            <span class="badge bg-primary rounded-1" style="min-width:60px; font-weight: 500;">${p.year}</span>
+            
+            <div class="flex-grow-1">
+                <a href="${p.link}" target="_blank" class="text-decoration-none d-block mb-1" style="color: #222; font-weight: 700; font-size: 1.05rem; line-height: 1.4;">
+                    ${p.title}
+                </a>
+                
+                <div class="text-secondary small mb-1" style="font-weight: 500;">
+                    ${p.author || '저자 정보 없음'} et al.
+                </div>
+                
+                <div class="text-primary small italic" style="opacity: 0.8; font-family: 'Georgia', serif;">
+                    ${p.journal}
+                </div>
             </div>
         </div>
     `).join('');
 }
+
+
 
 function renderNews() {
     const list = document.getElementById('news-grid');
@@ -1030,4 +1086,3 @@ function openNewsModal(index) {
 </script>
 </body>
 </html>
-
