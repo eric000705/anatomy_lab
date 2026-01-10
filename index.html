@@ -1035,80 +1035,32 @@ function renderMembers(category) {
 
 /**
  * 섹션 전환 함수
- * 해시(#) 값을 받아 해당 섹션만 보여줍니다.
+ * 클릭한 섹션만 보이고 나머지는 숨깁니다.
  */
-function showSection(hash) {
-    // 1. 해시값이 없거나 '#'만 있으면 기본값 'home' 사용
-    let sectionId = hash.replace('#', '') || 'home';
-
-    // 2. 모든 섹션을 숨김
+function showSection(sectionId) {
+    // 1. 모든 섹션(.content-section)을 찾아서 숨김
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => {
         section.style.display = 'none';
     });
 
-    // 3. 대상 섹션 표시
+    // 2. 선택한 ID를 가진 섹션만 보이게 설정
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.style.display = 'block';
     }
 
-    // 4. 네비게이션 메뉴 활성화 스타일(active) 관리
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${sectionId}`) {
-            link.classList.add('active');
-        }
-    });
-
-    // 5. 모바일 메뉴 자동 닫기
+    // 3. 모바일 환경에서 메뉴 클릭 시 펼쳐진 메뉴창을 자동으로 닫기
     const navbarCollapse = document.getElementById('navbarNav');
     if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+        // 부트스트랩의 Collapse 인스턴스를 가져오거나 생성하여 닫기(hide) 실행
         const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse);
         bsCollapse.hide();
     }
     
-    // 6. 페이지 상단으로 스크롤 이동
+    // 4. 페이지 전환 시 화면 최상단으로 스크롤 이동
     window.scrollTo(0, 0);
 }
-
-/**
- * 브라우저 이벤트 리스너
- */
-
-// 뒤로가기, 앞으로가기 또는 주소창 직접 입력 시 감지
-window.addEventListener('hashchange', function() {
-    showSection(window.location.hash);
-});
-
-// 페이지 처음 로드 시 실행
-document.addEventListener('DOMContentLoaded', async function() {
-    // 1. 데이터 로딩 (전체 데이터가 시트에 많으므로 반드시 완료를 기다려야 함)
-    await loadAllLabData();
-    
-    // 2. 해시 확인 및 섹션 표시
-    showSection(window.location.hash);
-
-    // 3. 캐러셀은 데이터와 상관없으니 바로 실행
-    const heroCarousel = document.querySelector('#heroCarousel');
-    if (heroCarousel) {
-        new bootstrap.Carousel(heroCarousel, { interval: 5000, ride: 'carousel' });
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // News 모달 열기 함수 (news의 사진팝업)
