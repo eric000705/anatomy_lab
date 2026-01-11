@@ -698,23 +698,19 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
                     <div class="mb-4">
-                        <i class="fa-solid fa-lock text-primary display-4"></i>
+                        <i class="fa-solid fa-terminal text-primary display-4"></i>
                     </div>
-                    <h3 class="fw-bold mb-3">Admin Access</h3>
-                    <p class="text-muted small mb-4">관리자 전용 페이지입니다.<br>인증 코드를 입력해주세요.</p>
+                    <h3 class="fw-bold mb-3">Page Redirect</h3>
+                    <p class="text-muted small mb-4">이동할 페이지의 이름을 입력해주세요.<br>(예: admin 입력 시 admin.html로 이동)</p>
                     
                     <div class="form-floating mb-3">
-                        <input type="password" id="adminCode" class="form-control rounded-pill px-4" placeholder="Access Code">
-                        <label for="adminCode" class="px-4">Access Code</label>
+                        <input type="text" id="adminCode" class="form-control rounded-pill px-4" placeholder="Page Name">
+                        <label for="adminCode" class="px-4">Page Name</label>
                     </div>
                     
-                    <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3" onclick="checkAdminCode()">
-                        인증하기
+                    <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3" onclick="goToAdminPage()">
+                        이동하기
                     </button>
-                    
-                    <div id="adminError" class="text-danger small mt-3" style="display:none;">
-                        코드가 일치하지 않습니다.
-                    </div>
                 </div>
             </div>
         </div>
@@ -977,29 +973,27 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 
 /**
- * 관리자 코드 확인 및 이동
+ * 입력한 문자열.html로 이동
  */
-function checkAdminCode() {
-    const inputCode = document.getElementById('adminCode').value;
-    const errorMsg = document.getElementById('adminError');
+function goToAdminPage() {
+    const pageName = document.getElementById('adminCode').value.trim();
     
-    // 비밀번호 설정: "default"
-    if (inputCode === "default") {
-        errorMsg.style.display = 'none';
-        // 인증 성공 시 default.html로 이동
-        window.location.href = "default.html";
+    if (pageName !== "") {
+        // 입력한문자열.html 로 이동
+        window.location.href = pageName + ".html";
     } else {
-        // 인증 실패 시 메시지 표시
-        errorMsg.style.display = 'block';
-        document.getElementById('adminCode').value = ""; // 입력란 초기화
+        alert("이동할 페이지 이름을 입력해주세요.");
         document.getElementById('adminCode').focus();
     }
 }
 
-// 엔터키 입력 시에도 확인 버튼이 작동하도록 추가
+// 엔터키 입력 시 실행
 document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && document.getElementById('admin').style.display === 'block') {
-        checkAdminCode();
+    if (e.key === 'Enter') {
+        const adminSection = document.getElementById('admin');
+        if (adminSection && adminSection.style.display === 'block') {
+            goToAdminPage();
+        }
     }
 });
 
