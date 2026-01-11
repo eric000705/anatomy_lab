@@ -1,3 +1,19 @@
+<!-- 구글 시트웹게시 이용 방식 -->
+ <!-- 구글 시트웹게시 이용 방식 -->
+  <!-- 구글 시트웹게시 이용 방식 -->
+   <!-- 구글 시트웹게시 이용 방식 -->
+    <!-- 구글 시트웹게시 이용 방식 -->
+     <!-- 구글 시트웹게시 이용 방식 -->
+      <!-- 구글 시트웹게시 이용 방식 -->
+       <!-- 구글 시트웹게시 이용 방식 -->
+        <!-- 구글 시트웹게시 이용 방식 -->
+         <!-- 구글 시트웹게시 이용 방식 -->
+          <!-- 구글 시트웹게시 이용 방식 -->
+           <!-- 구글 시트웹게시 이용 방식 -->
+            <!-- 구글 시트웹게시 이용 방식 -->
+             <!-- 구글 시트웹게시 이용 방식 -->
+
+
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -817,90 +833,30 @@
 
 
 const URLS = {
-    members: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=0&single=true&output=csv",
-    publications: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=653790612&single=true&output=csv",
-    news: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=102089785&single=true&output=csv", 
-    interests: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=361653352&single=true&output=csv" 
+    members: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=0&single=true&output=csv",
+    publications: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=637438885&single=true&output=csv",
+    news: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=524342030&single=true&output=csv", 
+    interests: "https://docs.google.com/spreadsheets/d/e/2PACX-1vScT234ofHtmlujlRgiAd9P91gCrfyEu5BjKv2wORZKbC3MuwCLa9NCxo4vcb6ODrzqi_4r-qnqMEXo/pub?gid=430870758&single=true&output=csv" 
 };
 
-// [필독] 본인의 앱시트 App ID로 수정하세요 (Settings -> Information -> Properties에서 확인 가능)
-const APPSHEET_APP_ID = "database-210117739-26-01-11"; 
 
-/**
- * 앱시트 이미지 경로를 실제 웹에서 볼 수 있는 URL로 변환하는 함수
- * @param {string} fileName - 시트에 저장된 파일 경로 (예: Members_Images/abc.jpg)
- * @param {string} tableName - 해당 사진이 있는 시트(테이블) 이름
- */
-function getDirectLink(fileName, tableName = "Members") {
-    if (!fileName || fileName.trim() === "") return 'image/logo.png';
-
-    // 1. 기존 구글 드라이브 공유 링크(id=...) 방식도 호환되도록 유지
-    if (fileName.includes('id=')) {
-        let fileId = fileName.split('id=')[1].split('&')[0];
-        return 'https://drive.google.com/uc?export=view&id=' + fileId;
+// 2. 구글 드라이브 이미지 주소 변환 함수 (기존 GAS 로직 이식)
+function getDirectLink(url) {
+    if (url && url.includes('drive.google.com')) {
+        let fileId = '';
+        if (url.includes('/d/')) {
+            fileId = url.split('/d/')[1].split('/')[0];
+        } else if (url.includes('id=')) {
+            fileId = url.split('id=')[1].split('&')[0];
+        }
+        if (fileId) {
+            return 'https://lh3.googleusercontent.com/d/' + fileId;
+        }
     }
-
-    // 2. 앱시트 방식: 파일 경로만 있는 경우 주소 생성
-    // tableName이 동적으로 들어오지 않을 경우를 대비해 각 데이터 가공 시점에 테이블명을 지정해주는 것이 좋습니다.
-    return `https://www.appsheet.com/template/gettablefileurl?appName=${APPSHEET_APP_ID}&tableName=${tableName}&fileName=${encodeURIComponent(fileName)}`;
+    // 링크가 없으면 로고 파일 사용
+    return url || 'image/error.png';
 }
 
-// 4. 데이터를 불러와서 화면에 그리는 통합 함수 수정
-async function loadAllLabData() {
-    try {
-        console.log("데이터 로딩 시작...");
-        const [resMem, resPub, resNews, resInt] = await Promise.all([
-            fetch(URLS.members), fetch(URLS.publications), fetch(URLS.news), fetch(URLS.interests)
-        ]);
-
-        const texts = await Promise.all([resMem.text(), resPub.text(), resNews.text(), resInt.text()]);
-
-        // 1. Members 파싱 (테이블명 'Members' 지정)
-        const rawMem = Papa.parse(texts[0], {header: false}).data;
-        allLabData.members = rawMem.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "") 
-            .map(row => ({
-                category: (row[0] || "").trim(),
-                name: (row[1] || "").trim(),
-                engName: (row[2] || "").trim(),
-                email: (row[3] || "").trim(),
-                status: (row[4] || "").trim(),
-                photo: getDirectLink(row[5] || "", "members") // 테이블명 전달
-            }));
-        
-        // 2. Publications (이미지 없음)
-        const rawPub = Papa.parse(texts[1], {header: false}).data;
-        allLabData.publications = rawPub.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ year: r[0], title: r[1], journal: r[2], author: r[3], link: r[4] }));
-
-        // 3. News 파싱 (테이블명 'News' 지정)
-        const rawNews = Papa.parse(texts[2], {header: false}).data;
-        allLabData.news = rawNews.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ 
-                date: r[0], title: r[1], desc: r[2], tag: r[3], 
-                img: getDirectLink(r[4] || "", "news") // 테이블명 전달
-            })).reverse();
-
-        // 4. Interests 파싱 (테이블명 'Interests' 지정)
-        const rawInt = Papa.parse(texts[3], {header: false}).data;
-        allLabData.interests = rawInt.slice(1)
-            .filter(r => r[0] && r[0].trim() !== "")
-            .map(r => ({ 
-                title: r[0], desc: r[1], 
-                img: getDirectLink(r[2] || "", "interests") // 테이블명 전달
-            }));
-
-        renderMembers('대학원생');
-        renderPublications();
-        renderNews();
-        renderInterests();
-
-    } catch (err) {
-        console.error("데이터 로딩 중 오류:", err);
-    }
-}
 // 4. 데이터를 불러와서 화면에 그리는 통합 함수
 let allLabData = { members: [], publications: [], news: [], interests: [] };
 
