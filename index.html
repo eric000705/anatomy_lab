@@ -865,11 +865,31 @@ let allLabData = { members: [], publications: [], news: [], interests: [] };
  */
 function getDirectLink(fileName, tableName) {
     if (!fileName || fileName.trim() === "") return 'image/error.png';
+
+    // 1. 구글 드라이브 링크인 경우 (공유 링크, 직접 링크 등 대응)
+    if (fileName.includes('drive.google.com')) {
+        let fileId = '';
+        
+        // 정규식을 사용하여 다양한 형식의 URL에서 ID 추출
+        const regex = /(?:\/d\/|id=)([\w-]+)/;
+        const match = fileName.match(regex);
+        
+        if (match && match[1]) {
+            fileId = match[1];
+            // thumbnail 링크가 일반 uc 링크보다 브라우저 로딩 시 차단이 덜 되는 경향이 있습니다.
+            return `https://lh3.googleusercontent.com/u/0/d/${fileId}=w1000`;
+            // 위 방식이 안 된다면 기존 방식을 사용하세요:
+            // return 'https://drive.google.com/uc?export=view&id=' + fileId;
+        }
+    }
+
+    // 2. 이미 'id=' 문자열만 포함된 경우 (기존 로직 유지)
     if (fileName.includes('id=')) {
         let fileId = fileName.split('id=')[1].split('&')[0];
         return 'https://drive.google.com/uc?export=view&id=' + fileId;
     }
-    // 앱시트 주소 조합 (tableName은 시트 탭 이름과 정확히 일치해야 함)
+
+    // 3. 앱시트 주소 조합
     return `https://www.appsheet.com/template/gettablefileurl?appName=${APPSHEET_APP_ID}&tableName=${tableName}&fileName=${encodeURIComponent(fileName)}`;
 }
 
