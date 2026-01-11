@@ -815,7 +815,6 @@
 <script>
 
 
-
 const URLS = {
     members: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=0&single=true&output=csv",
     publications: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=653790612&single=true&output=csv",
@@ -823,29 +822,26 @@ const URLS = {
     interests: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Qz23a--oaGCKDwzVVVclTa18clTYavdMl6MbbwMIMmIuIK2QWRHnbRGmtdKcOoqrMvFRQbicej1w/pub?gid=361653352&single=true&output=csv" 
 };
 
-// [필독] 본인의 앱시트 App ID로 수정하세요 (Settings -> Information -> Properties에서 확인 가능)
 const APPSHEET_APP_ID = "database-210117739-26-01-11"; 
 
-/**
- * 앱시트 이미지 경로를 실제 웹에서 볼 수 있는 URL로 변환하는 함수
- * @param {string} fileName - 시트에 저장된 파일 경로 (예: Members_Images/abc.jpg)
- * @param {string} tableName - 해당 사진이 있는 시트(테이블) 이름
- */
-function getDirectLink(fileName, tableName = "Members") {
-    if (!fileName || fileName.trim() === "") return 'image/logo.png';
+let allLabData = { members: [], publications: [], news: [], interests: [] };
 
-    // 1. 기존 구글 드라이브 공유 링크(id=...) 방식도 호환되도록 유지
+/**
+ * 이미지 주소 변환 함수 (AppSheet & Google Drive 호환)
+ */
+function getDirectLink(fileName, tableName) {
+    if (!fileName || fileName.trim() === "") return 'image/logo.png';
     if (fileName.includes('id=')) {
         let fileId = fileName.split('id=')[1].split('&')[0];
         return 'https://drive.google.com/uc?export=view&id=' + fileId;
     }
-
-    // 2. 앱시트 방식: 파일 경로만 있는 경우 주소 생성
-    // tableName이 동적으로 들어오지 않을 경우를 대비해 각 데이터 가공 시점에 테이블명을 지정해주는 것이 좋습니다.
+    // 앱시트 주소 조합 (tableName은 시트 탭 이름과 정확히 일치해야 함)
     return `https://www.appsheet.com/template/gettablefileurl?appName=${APPSHEET_APP_ID}&tableName=${tableName}&fileName=${encodeURIComponent(fileName)}`;
 }
 
-// 4. 데이터를 불러와서 화면에 그리는 통합 함수 수정
+/**
+ * 데이터 로딩 함수 (status 필터링 적용)
+ */
 async function loadAllLabData() {
     try {
         console.log("데이터 로딩 시작...");
@@ -855,191 +851,120 @@ async function loadAllLabData() {
 
         const texts = await Promise.all([resMem.text(), resPub.text(), resNews.text(), resInt.text()]);
 
-        // 1. Members 파싱 (테이블명 'Members' 지정)
+        // 1. Members (열: status, degree, name_ko, name_en, mail, year, image)
         const rawMem = Papa.parse(texts[0], {header: false}).data;
         allLabData.members = rawMem.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "") 
-            .map(row => ({
-                category: (row[0] || "").trim(),
-                name: (row[1] || "").trim(),
-                engName: (row[2] || "").trim(),
-                email: (row[3] || "").trim(),
-                status: (row[4] || "").trim(),
-                photo: getDirectLink(row[5] || "", "members") // 테이블명 전달
+            .filter(r => r[0] === "활성") // 활성화된 데이터만
+            .map(r => ({
+                category: (r[1] || "").trim(),
+                name: (r[2] || "").trim(),
+                engName: (r[3] || "").trim(),
+                email: (r[4] || "").trim(),
+                status: (r[5] || "").trim(), // year를 status(현재상태) 자리에 매칭
+                photo: getDirectLink(r[6], "members") 
             }));
         
-        // 2. Publications (이미지 없음)
+        // 2. Publications (열: status, year, title, journal, author, link)
         const rawPub = Papa.parse(texts[1], {header: false}).data;
         allLabData.publications = rawPub.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ year: r[0], title: r[1], journal: r[2], author: r[3], link: r[4] }));
-
-        // 3. News 파싱 (테이블명 'News' 지정)
-        const rawNews = Papa.parse(texts[2], {header: false}).data;
-        allLabData.news = rawNews.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ 
-                date: r[0], title: r[1], desc: r[2], tag: r[3], 
-                img: getDirectLink(r[4] || "", "news") // 테이블명 전달
-            })).reverse();
-
-        // 4. Interests 파싱 (테이블명 'Interests' 지정)
-        const rawInt = Papa.parse(texts[3], {header: false}).data;
-        allLabData.interests = rawInt.slice(1)
-            .filter(r => r[0] && r[0].trim() !== "")
-            .map(r => ({ 
-                title: r[0], desc: r[1], 
-                img: getDirectLink(r[2] || "", "interests") // 테이블명 전달
-            }));
-
-        renderMembers('대학원생');
-        renderPublications();
-        renderNews();
-        renderInterests();
-
-    } catch (err) {
-        console.error("데이터 로딩 중 오류:", err);
-    }
-}
-// 4. 데이터를 불러와서 화면에 그리는 통합 함수
-let allLabData = { members: [], publications: [], news: [], interests: [] };
-
-
-
-
-
-
-// 1. 모든 데이터를 불러오고 화면에 뿌리는 통합 함수
-async function loadAllLabData() {
-    try {
-        console.log("데이터 로딩 시작...");
-        // 모든 시트 데이터를 동시에 병렬 호출
-        const [resMem, resPub, resNews, resInt] = await Promise.all([
-            fetch(URLS.members), fetch(URLS.publications), fetch(URLS.news), fetch(URLS.interests)
-        ]);
-
-        const texts = await Promise.all([resMem.text(), resPub.text(), resNews.text(), resInt.text()]);
-
-        // 1. Members 파싱 (2번째 열인 '이름'이 있는 경우만 취급)
-        const rawMem = Papa.parse(texts[0], {header: false}).data;
-        allLabData.members = rawMem.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "") 
-            .map(row => ({
-                category: (row[0] || "").trim(),
-                name: (row[1] || "").trim(),
-                engName: (row[2] || "").trim(),
-                email: (row[3] || "").trim(),
-                status: (row[4] || "").trim(),
-                photo: getDirectLink(row[5] || "")
-            }));
-        
-        // 2. Publications 파싱
-        const rawPub = Papa.parse(texts[1], {header: false}).data;
-        allLabData.publications = rawPub.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ year: r[0], title: r[1], journal: r[2], author: r[3], link: r[4] }))
+            .filter(r => r[0] === "활성")
+            .map(r => ({ year: r[1], title: r[2], journal: r[3], author: r[4], link: r[5] }))
             .sort((a, b) => b.year - a.year);
 
-        // 3. News 파싱
+        // 3. News (열: status, date, title, context, tag, image)
         const rawNews = Papa.parse(texts[2], {header: false}).data;
         allLabData.news = rawNews.slice(1)
-            .filter(r => r[1] && r[1].trim() !== "")
-            .map(r => ({ date: r[0], title: r[1], desc: r[2], tag: r[3], img: getDirectLink(r[4]) }))
-            .reverse();
+            .filter(r => r[0] === "활성")
+            .map(r => ({ 
+                date: r[1], title: r[2], desc: r[3], tag: r[4], 
+                img: getDirectLink(r[5], "news") 
+            })).reverse();
 
-        // 4. Interests 파싱
+        // 4. Interests (열: status, title, context, image)
         const rawInt = Papa.parse(texts[3], {header: false}).data;
         allLabData.interests = rawInt.slice(1)
-            .filter(r => r[0] && r[0].trim() !== "")
-            .map(r => ({ title: r[0], desc: r[1], img: getDirectLink(r[2]) }));
+            .filter(r => r[0] === "활성")
+            .map(r => ({ 
+                title: r[1], desc: r[2], 
+                img: getDirectLink(r[3], "interests") 
+            }));
 
-        console.log("데이터 로드 완료. 렌더링 시작.");
-
-        // 모든 섹션 렌더링 실행
+        console.log("데이터 로드 및 필터링 완료.");
         renderMembers('대학원생');
         renderPublications();
         renderNews();
         renderInterests();
 
     } catch (err) {
-        console.error("데이터 로딩 중 치명적 오류:", err);
-        // 에러 발생 시 사용자 안내
-        const loaders = ['member-grid', 'pub-list', 'news-grid', 'interest-list'];
-        loaders.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.innerHTML = `<p class="text-center py-5 text-danger">데이터를 불러오지 못했습니다. (네트워크 오류)</p>`;
-        });
+        console.error("데이터 로딩 오류:", err);
     }
 }
 
+/**
+ * 섹션 전환 및 이벤트 리스너
+ */
+function showSection(hash) {
+    let sectionId = hash.replace('#', '') || 'home';
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(section => { section.style.display = 'none'; });
 
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) { targetSection.style.display = 'block'; }
 
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${sectionId}`) { link.classList.add('active'); }
+    });
 
+    const navbarCollapse = document.getElementById('navbarNav');
+    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse);
+        bsCollapse.hide();
+    }
+    window.scrollTo(0, 0);
+}
 
+window.addEventListener('hashchange', function() { showSection(window.location.hash); });
 
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadAllLabData();
+    showSection(window.location.hash);
 
-
-// 페이지 로드 시 모든 로직 통합 실행
-document.addEventListener('DOMContentLoaded', function() {
-    loadAllLabData();    // 1. 모든 데이터(CSV) 불러오기 및 렌더링
-    showSection('home'); // 2. 첫 화면으로 '홈' 표시
-    
-    // 부트스트랩 캐러셀 자동 재생을 위한 추가 설정 (선택사항)
     const heroCarousel = document.querySelector('#heroCarousel');
     if (heroCarousel) {
-        new bootstrap.Carousel(heroCarousel, {
-            interval: 5000,
-            ride: 'carousel'
-        });
+        new bootstrap.Carousel(heroCarousel, { interval: 5000, ride: 'carousel' });
     }
 });
 
-// --- 각 섹션 렌더링 함수 ---
+// --- 렌더링 함수들 ---
 
 function renderPublications() {
     const list = document.getElementById('pub-list');
     if (!list) return;
-
     list.innerHTML = allLabData.publications.map(p => `
-        <div class="pub-item border-bottom py-3 d-flex gap-3 align-items-start" style="transition: background 0.3s;">
-            <span class="badge bg-primary rounded-1" style="min-width:60px; font-weight: 500;">${p.year}</span>
-            
+        <div class="pub-item border-bottom py-3 d-flex gap-3 align-items-start">
+            <span class="badge bg-primary rounded-1" style="min-width:60px;">${p.year}</span>
             <div class="flex-grow-1">
-                <a href="${p.link}" target="_blank" class="text-decoration-none d-block mb-1" style="color: #222; font-weight: 700; font-size: 1.05rem; line-height: 1.4;">
-                    ${p.title}
-                </a>
-                
-                <div class="text-secondary small mb-1" style="font-weight: 500;">
-                    ${p.author || '저자 정보 없음'} et al.
-                </div>
-                
-                <div class="text-primary small italic" style="opacity: 0.8; font-family: 'Georgia', serif;">
-                    ${p.journal}
-                </div>
+                <a href="${p.link}" target="_blank" class="text-decoration-none d-block mb-1" style="color: #222; font-weight: 700;">${p.title}</a>
+                <div class="text-secondary small">${p.author} et al.</div>
+                <div class="text-primary small italic">${p.journal}</div>
             </div>
         </div>
     `).join('');
 }
 
-
-
 function renderNews() {
     const list = document.getElementById('news-grid');
     if (!list) return;
-    
-    // map의 두 번째 인자인 'index'를 사용하여 각 카드의 고유 번호를 부여합니다.
     list.innerHTML = allLabData.news.map((n, index) => `
         <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" 
-                 style="cursor:pointer;" onclick="openNewsModal(${index})">
-                <img src="${n.img}" 
-                    onerror="this.src='image/logo.png'" 
-                    class="card-img-top" 
-                    style="height:200px; object-fit:cover;">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden rounded-3 hover-translate-up" style="cursor:pointer;" onclick="openNewsModal(${index})">
+                <img src="${n.img}" onerror="this.src='image/logo.png'" class="card-img-top" style="height:200px; object-fit:cover;">
                 <div class="card-body">
                     <span class="badge bg-light text-primary mb-2">${n.tag || 'News'}</span>
                     <h6 class="fw-bold mb-2">${n.title}</h6>
-                   <p class="text-muted x-small mb-3 news-summary">${n.desc || ''}</p>
+                    <p class="text-muted x-small mb-3 news-summary">${n.desc || ''}</p>
                     <div class="text-secondary" style="font-size:0.7rem;">${n.date}</div>
                 </div>
             </div>
@@ -1050,44 +975,32 @@ function renderNews() {
 function renderInterests() {
     const list = document.getElementById('interest-list');
     if (!list) return;
-        list.innerHTML = allLabData.interests.map(i => `
-            <div class="mb-5 text-center">
-                <img src="${i.img}" 
-                    onerror="this.src='image/error.png'" 
-                    class="img-fluid mb-4 shadow-sm" 
-                    style="width:60%; height:auto;">
-                <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
-                <p class="text-muted mx-auto" style="max-width:800px; line-height:1.8;">${i.desc}</p>
-            </div>
-        `).join('');
+    list.innerHTML = allLabData.interests.map(i => `
+        <div class="mb-5 text-center">
+            <img src="${i.img}" onerror="this.src='image/error.png'" class="img-fluid mb-4 shadow-sm" style="width:60%;">
+            <h4 class="fw-bold text-primary mb-3">${i.title}</h4>
+            <p class="text-muted mx-auto" style="max-width:800px; line-height:1.8;">${i.desc}</p>
+        </div>
+    `).join('');
 }
 
 function renderMembers(category) {
     const grid = document.getElementById('member-grid');
     if (!grid) return;
-
     const buttons = document.querySelectorAll('#members .btn');
     buttons.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.innerText === category) {
-            btn.classList.add('active');
-        }
+        if (btn.innerText === category) { btn.classList.add('active'); }
     });
-
     const filtered = allLabData.members.filter(m => m.category === category);
-    
     if (filtered.length === 0) {
         grid.innerHTML = `<p class="text-center py-5 text-muted">등록된 정보가 없습니다.</p>`;
         return;
     }
-
     grid.innerHTML = filtered.map(m => `
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="member-card shadow-sm p-4 bg-white rounded-3 border-0 text-center hover-translate-up" style="transition: 0.3s;">
-                <img src="${m.photo}" 
-                    onerror="this.src='image/error.png'" 
-                    class="rounded-circle mb-3 shadow-sm" 
-                    style="width:150px; height:150px; object-fit:cover; border: 3px solid #f8f9fa;">
+            <div class="member-card shadow-sm p-4 bg-white rounded-3 border-0 text-center hover-translate-up">
+                <img src="${m.photo}" onerror="this.src='image/error.png'" class="rounded-circle mb-3 shadow-sm" style="width:150px; height:150px; object-fit:cover;">
                 <div class="name fw-bold fs-5">${m.name}</div>
                 <div class="eng-name text-muted small mb-2">${m.engName || ''}</div>
                 <a class="email d-block mb-1 text-decoration-none" href="mailto:${m.email}" style="color: var(--cnu-blue); font-size: 0.9rem;">${m.email || ''}</a>
@@ -1097,96 +1010,16 @@ function renderMembers(category) {
     `).join('');
 }
 
-
-/**
- * 섹션 전환 함수
- * 해시(#) 값을 받아 해당 섹션만 보여줍니다.
- */
-function showSection(hash) {
-    // 1. 해시값이 없거나 '#'만 있으면 기본값 'home' 사용
-    let sectionId = hash.replace('#', '') || 'home';
-
-    // 2. 모든 섹션을 숨김
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach(section => {
-        section.style.display = 'none';
-    });
-
-    // 3. 대상 섹션 표시
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.style.display = 'block';
-    }
-
-    // 4. 네비게이션 메뉴 활성화 스타일(active) 관리
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${sectionId}`) {
-            link.classList.add('active');
-        }
-    });
-
-    // 5. 모바일 메뉴 자동 닫기
-    const navbarCollapse = document.getElementById('navbarNav');
-    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse);
-        bsCollapse.hide();
-    }
-    
-    // 6. 페이지 상단으로 스크롤 이동
-    window.scrollTo(0, 0);
-}
-
-/**
- * 브라우저 이벤트 리스너
- */
-
-// 뒤로가기, 앞으로가기 또는 주소창 직접 입력 시 감지
-window.addEventListener('hashchange', function() {
-    showSection(window.location.hash);
-});
-
-// 페이지 처음 로드 시 실행
-document.addEventListener('DOMContentLoaded', function() {
-    loadAllLabData(); // 기존 데이터 로딩 함수 호출
-
-    // 접속한 주소에 해시가 있으면 해당 섹션을, 없으면 홈을 보여줌
-    showSection(window.location.hash);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// News 모달 열기 함수 (news의 사진팝업)
 function openNewsModal(index) {
     const data = allLabData.news[index];
     if (!data) return;
-
-    // 모달 내용 채우기
     document.getElementById('newsModalTitle').innerText = data.title;
     document.getElementById('newsModalImg').src = data.img;
-    document.getElementById('newsModalImg').onerror = function() { this.src = 'image/logo.png'; };
     document.getElementById('newsModalDate').innerText = data.date;
     document.getElementById('newsModalDesc').innerText = data.desc;
-
-    // 부트스트랩 모달 띄우기
     const myModal = new bootstrap.Modal(document.getElementById('newsModal'));
     myModal.show();
 }
-
 </script>
 </body>
 </html>
