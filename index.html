@@ -698,24 +698,25 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
                     <div class="mb-4">
-                        <i class="fa-solid fa-terminal text-primary display-4"></i>
+                        <i class="fa-solid fa-lock text-primary display-4"></i>
                     </div>
-                    <h3 class="fw-bold mb-3">Page Redirect</h3>
-                    <p class="text-muted small mb-4">이동할 페이지의 이름을 입력해주세요.<br>(예: admin 입력 시 admin.html로 이동)</p>
+                    <h3 class="fw-bold mb-3">Admin Access</h3>
+                    <p class="text-muted small mb-4">관리자 전용 페이지입니다.<br>인증 코드를 입력해주세요.</p>
                     
                     <div class="form-floating mb-3">
                         <input type="text" id="adminCode" class="form-control rounded-pill px-4" placeholder="Page Name">
-                        <label for="adminCode" class="px-4">Page Name</label>
+                        <label for="adminCode" class="px-4">Access Code</label>
                     </div>
                     
                     <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3" onclick="goToAdminPage()">
-                        이동하기
+                        인증하기
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
 
 
 
