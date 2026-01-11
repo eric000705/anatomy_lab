@@ -683,8 +683,43 @@
 
 
 
-
-
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<!-- 관리자용 섹션 -->
+<section id="admin" class="content-section" style="display: none;">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
+                    <div class="mb-4">
+                        <i class="fa-solid fa-lock text-primary display-4"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Admin Access</h3>
+                    <p class="text-muted small mb-4">관리자 전용 페이지입니다.<br>인증 코드를 입력해주세요.</p>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="password" id="adminCode" class="form-control rounded-pill px-4" placeholder="Access Code">
+                        <label for="adminCode" class="px-4">Access Code</label>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3" onclick="checkAdminCode()">
+                        인증하기
+                    </button>
+                    
+                    <div id="adminError" class="text-danger small mt-3" style="display:none;">
+                        코드가 일치하지 않습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 
@@ -763,6 +798,8 @@
                 <div class="footer-social mb-3">
                     <a href="mailto:honggl@cnu.ac.kr" class="social-icon" title="Email"><i class="fa-solid fa-envelope"></i></a>
                     <a href="https://vetmed.cnu.ac.kr/" target="_blank" class="social-icon" title="CNU Vet"><i class="fa-solid fa-building-columns"></i></a>
+                    <a href="#admin" class="social-icon" title="Admin Control"><i class="fa-solid fa-wrench"></i></a>
+
                 </div>
                 <p class="copyright small text-secondary">
                     © 2026, Won-Seok Oh. All Rights Reserved.
@@ -830,7 +867,7 @@ let allLabData = { members: [], publications: [], news: [], interests: [] };
  * 이미지 주소 변환 함수 (AppSheet & Google Drive 호환)
  */
 function getDirectLink(fileName, tableName) {
-    if (!fileName || fileName.trim() === "") return 'image/logo.png';
+    if (!fileName || fileName.trim() === "") return 'image/error.png';
     if (fileName.includes('id=')) {
         let fileId = fileName.split('id=')[1].split('&')[0];
         return 'https://drive.google.com/uc?export=view&id=' + fileId;
@@ -936,6 +973,39 @@ document.addEventListener('DOMContentLoaded', async function() {
         new bootstrap.Carousel(heroCarousel, { interval: 5000, ride: 'carousel' });
     }
 });
+
+
+
+/**
+ * 관리자 코드 확인 및 이동
+ */
+function checkAdminCode() {
+    const inputCode = document.getElementById('adminCode').value;
+    const errorMsg = document.getElementById('adminError');
+    
+    // 비밀번호 설정: "default"
+    if (inputCode === "default") {
+        errorMsg.style.display = 'none';
+        // 인증 성공 시 default.html로 이동
+        window.location.href = "default.html";
+    } else {
+        // 인증 실패 시 메시지 표시
+        errorMsg.style.display = 'block';
+        document.getElementById('adminCode').value = ""; // 입력란 초기화
+        document.getElementById('adminCode').focus();
+    }
+}
+
+// 엔터키 입력 시에도 확인 버튼이 작동하도록 추가
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && document.getElementById('admin').style.display === 'block') {
+        checkAdminCode();
+    }
+});
+
+
+
+
 
 // --- 렌더링 함수들 ---
 
